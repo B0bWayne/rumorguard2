@@ -14,25 +14,30 @@ const userMessage = { role: 'user', content: input };
 setMessages(prev => [...prev, userMessage]);
 setInput('');
 setIsLoading(true);
-
 try {
-const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`, {
-method: 'POST',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({
-contents: [{ parts: [{ text: `You are RumorGuard Uganda. Verify this health rumor: ${input}` }] }]
-})
-});
+ const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`, {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({
+ contents: [{ 
+ parts: [{ text: `You are RumorGuard Uganda. Expertly verify this health rumor in a helpful way: ${input}` }] 
+ }]
+ })
+ });
 
-const data = await response.json();
-const aiResponse = data.candidates[0].content.parts[0].text;
-setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
-} catch (error) {
-setMessages(prev => [...prev, { role: 'assistant', content: 'Connection error. Check your settings!' }]);
-} finally {
-setIsLoading(false);
-}
-};
+ const data = await response.json();
+ 
+ if (data.candidates && data.candidates[0].content.parts[0].text) {
+ const aiResponse = data.candidates[0].content.parts[0].text;
+ setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
+ } else {
+ throw new Error('Invalid response format');
+ }
+ } catch (error) {
+ setMessages(prev => [...prev, { role: 'assistant', content: 'Connection error. Check your settings!' }]);
+ } finally {
+ setIsLoading(false);
+ }
 
 return (
 <div className="max-w-2xl mx-auto my-10 p-4 md:p-6 bg-white rounded-3xl shadow-2xl border border-blue-50 overflow-hidden">
