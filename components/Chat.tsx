@@ -7,11 +7,25 @@ const [messages, setMessages] = useState([{ role: 'assistant', content: 'Hello! 
 const handleSend = async () => {
 if (!input.trim()) return;
 const userMessage = { role: 'user', content: input };
-setMessages([...messages, userMessage]);
+setMessages(prev => [...prev, userMessage]);
 setInput('');
 
-// Here is where it calls the Gemini "Brain" you got from AI Studio
-setMessages(prev => [...prev, { role: 'assistant', content: 'Verifying with Health Intelligence...' }]);
+try {
+// This looks for the 'brain' we are about to set up in Netlify
+const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({
+contents: [{ parts: [{ text: `You are RumorGuard, a health fact-checker for Uganda. Verify this rumor: ${input}` }] }]
+})
+});
+  
+const data = await response.json();
+const aiResponse = data.candidates[0].content.parts[0].text;
+setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
+} catch (error) {
+setMessages(prev => [...prev, { role: 'assistant', content: 'Connection error. Please check your API key.' }]);
+}
 };
 
 return (
