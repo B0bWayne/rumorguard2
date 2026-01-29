@@ -9,7 +9,7 @@ import Dashboard from './components/Dashboard';
 import ExplainerList from './components/ExplainerList';
 import VHTPortal from './components/VHTPortal';
 import PartnerInsights from './components/PartnerInsights';
-
+import Chat from './components/Chat';
 const App: React.FC = () => {
   const [currentView, setView] = useState('feed');
   const [rumors, setRumors] = useState<RumorReport[]>(INITIAL_RUMORS);
@@ -46,7 +46,8 @@ const App: React.FC = () => {
 
       <main className="px-4 py-4 md:py-8 max-w-7xl mx-auto">
         <div className="transition-all duration-500 animate-in fade-in slide-in-from-bottom-2">
-          {renderView()}
+          {renderView()} 
+          <Chat />
         </div>
       </main>
 
