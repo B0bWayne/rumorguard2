@@ -2,49 +2,80 @@ import React, { useState } from 'react';
 
 const Chat = () => {
 const [input, setInput] = useState('');
-const [messages, setMessages] = useState([{ role: 'assistant', content: 'Hello! I am RumorGuard. Enter a health rumor you have heard, and I will verify it for you.' }]);
+const [isLoading, setIsLoading] = useState(false);
+const [messages, setMessages] = useState([
+{ role: 'assistant', content: 'Hello! I am RumorGuard. Enter a health rumor you have heard, and I will verify it for you.' }
+]);
 
 const handleSend = async () => {
-if (!input.trim()) return;
+if (!input.trim() || isLoading) return;
+
 const userMessage = { role: 'user', content: input };
 setMessages(prev => [...prev, userMessage]);
 setInput('');
+setIsLoading(true);
 
 try {
-// This looks for the 'brain' we are about to set up in Netlify
-const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`, {
+const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`, {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({
-contents: [{ parts: [{ text: `You are RumorGuard, a health fact-checker for Uganda. Verify this rumor: ${input}` }] }]
+contents: [{ parts: [{ text: `You are RumorGuard Uganda. Verify this health rumor: ${input}` }] }]
 })
 });
-  
+
 const data = await response.json();
 const aiResponse = data.candidates[0].content.parts[0].text;
 setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
 } catch (error) {
-setMessages(prev => [...prev, { role: 'assistant', content: 'Connection error. Please check your API key.' }]);
+setMessages(prev => [...prev, { role: 'assistant', content: 'Connection error. Check your settings!' }]);
+} finally {
+setIsLoading(false);
 }
 };
 
 return (
-<div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-sm border border-slate-100">
-<div className="h-80 overflow-y-auto mb-4 space-y-4 p-4">
+<div className="max-w-2xl mx-auto my-10 p-4 md:p-6 bg-white rounded-3xl shadow-2xl border border-blue-50 overflow-hidden">
+<div className="h-[450px] overflow-y-auto mb-4 space-y-4 p-2 scroll-smooth">
 {messages.map((msg, i) => (
-<div key={i} className={`p-3 rounded-lg ${msg.role === 'user' ? 'bg-blue-50 ml-auto' : 'bg-slate-50 mr-auto'} max-w-[80%]`}>
-<p className="text-sm text-slate-700">{msg.content}</p>
+<div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2`}>
+<div className={`max-w-[85%] p-4 rounded-2xl shadow-sm ${
+msg.role === 'user'
+? 'bg-blue-600 text-white rounded-br-none'
+: 'bg-slate-100 text-slate-800 rounded-bl-none border border-slate-200'
+}`}>
+<p className="text-sm md:text-base leading-relaxed">{msg.content}</p>
+</div>
 </div>
 ))}
+{isLoading && (
+<div className="flex justify-start animate-pulse">
+<div className="bg-slate-100 p-4 rounded-2xl rounded-bl-none border border-slate-200">
+<div className="flex gap-1">
+<div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
+<div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+<div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce [animation-delay:0.4s]"></div>
 </div>
-<div className="flex gap-2">
+</div>
+</div>
+)}
+</div>
+
+<div className="flex gap-2 p-2 bg-slate-50 rounded-2xl border border-slate-200 focus-within:ring-2 focus-within:ring-blue-500 transition-all">
 <input
 value={input}
 onChange={(e) => setInput(e.target.value)}
-className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-placeholder="Type a rumor here..."
+onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+placeholder="Ask about a health rumor..."
+className="flex-1 bg-transparent px-3 py-2 outline-none text-slate-700"
 />
-<button onClick={handleSend} className="bg-blue-600 text-white px-4 py-2 rounded-lg">Verify</button>
+<button
+onClick={handleSend}
+disabled={isLoading}
+className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-xl font-bold transition-all disabled:opacity-50 active:scale-95"
+>
+{isLoading ? '...' : 'Verify'}
+</button>
 </div>
 </div>
 );
