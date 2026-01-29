@@ -1,0 +1,7 @@
+{
+  "name": "RumorGuard Uganda",
+  "description": "Real-time health misinformation detection and community reporting system for Uganda, blending social listening with VHT SMS data.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
