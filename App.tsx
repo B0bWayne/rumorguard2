@@ -51,22 +51,11 @@ const App: React.FC = () => {
       </main>
 
       <footer className="py-12 bg-white border-t border-slate-100 text-center mt-20 px-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-full mb-6 border border-slate-100">
-             <span className="w-2 h-2 rounded-full bg-green-500"></span>
-             <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">System Integrity: 99.9% Reliable</span>
-          </div>
-          <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">🛡️ RumorGuard Uganda • Official Health Intelligence Prototype</p>
-          <p className="text-[10px] text-slate-300 mt-4 max-w-xl mx-auto leading-relaxed">
-            Note: This is a prototype system. Real-time verification is powered by Gemini AI. For official clinical decisions, always consult a registered health professional or the Uganda Ministry of Health (MoH) guidelines.
-          </p>
-          <div className="flex justify-center gap-8 mt-8 text-[10px] font-black text-slate-400 uppercase">
-             <a href="#" className="hover:text-blue-600 transition-colors">Data Ethics</a>
-             <a href="#" className="hover:text-blue-600 transition-colors">VHT Registry</a>
-             <a href="#" className="hover:text-blue-600 transition-colors">API Docs</a>
-          </div>
-        </div>
-      </footer>
+ <div className="max-w-4xl mx-auto">
+ <h2 className="text-blue-600 text-xl font-extrabold tracking-tight">RumorGuard</h2>
+ <p className="text-slate-500 text-sm mt-1 font-medium">Verified Health Intelligence</p>
+ </div>
+</footer>
     </div>
   );
 };
