@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { RumorReport, RumorStatus, ReportSource, RumorCategory } from '../types';
-import { allQuestionsFlat, healthQuizBank } from '../data/quizData';
+import { allQuestionsFlat, healthQuizBank } from '../src/data/quizData';
 
 interface TrendFeedProps {
 rumors: RumorReport[];
